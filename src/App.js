@@ -13,6 +13,8 @@ import LoadingComponent from './components/globalSetting/LoadindComponent/Loadin
 import { ADD_HISTORY } from './redux/constants/HistoryConst';
 import { CyberbugsTemplate } from './templates/HomeTemplate/CyberbugsTemplate';
 import IndexCyberBugs from './pages/Cyberbugs/ProjectDetail/IndexCyberBugs';
+import CreateProject from './pages/Cyberbugs/CreateProject/CreateProject';
+import ProjectManagement from './pages/Cyberbugs/ProjectCyberbugs/ProjectManagement';
 
 function App() {
 
@@ -49,7 +51,9 @@ function App() {
           
 
           <CyberbugsTemplate exact path = "/cyberbugs" Component={IndexCyberBugs}/>
-
+          <CyberbugsTemplate exact path='/createproject' Component={CreateProject} />
+          <CyberbugsTemplate exact path='/projectmanagement' Component={ProjectManagement} />
+          
       </Switch>
       </>
    

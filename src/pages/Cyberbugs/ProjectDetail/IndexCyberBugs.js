@@ -5,7 +5,7 @@ import InfoMain from './../../../components/Cyberbugs/Main/InforMain';
 
 export default function IndexCyberBugs() {
     return (
-        <div>
+        <div  className="main">
             <h3>Cyber Board</h3>
             <HeaderMain/>
             <InfoMain/>

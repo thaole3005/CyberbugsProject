@@ -4,6 +4,7 @@ import '../../index.css';
 import SidebarCyberbugs from './../../components/Cyberbugs/Main/SidebarCyberbugs';
 import MenuCyberbugs from './../../components/Cyberbugs/MenuCyberbugs';
 import '../../index.css';
+import ModalCyberbugs from './../../components/Cyberbugs/ModalCyberbugs/ModalCyberbugs';
 
 
 
@@ -19,6 +20,7 @@ export const CyberbugsTemplate = (props) => {
                     <SidebarCyberbugs/>
                     <MenuCyberbugs/>
                     <Component {...propsRoute}/>
+                    <ModalCyberbugs/>
             </div>
         </>
     }}
