@@ -15,6 +15,9 @@ import { CyberbugsTemplate } from './templates/HomeTemplate/CyberbugsTemplate';
 import IndexCyberBugs from './pages/Cyberbugs/ProjectDetail/IndexCyberBugs';
 import CreateProject from './pages/Cyberbugs/CreateProject/CreateProject';
 import ProjectManagement from './pages/Cyberbugs/ProjectCyberbugs/ProjectManagement';
+import DrawerCyberbugs from './HOC/CyberbugsHOC/DrawerCyberbugs';
+
+
 
 function App() {
 
@@ -39,7 +42,9 @@ function App() {
   return (
    
     <>
+       
     <LoadingComponent/>
+    <DrawerCyberbugs/>
       <Switch>
         
           <HomeTemplate exact path = "/" Component={Home}/>
@@ -53,6 +58,7 @@ function App() {
           <CyberbugsTemplate exact path = "/cyberbugs" Component={IndexCyberBugs}/>
           <CyberbugsTemplate exact path='/createproject' Component={CreateProject} />
           <CyberbugsTemplate exact path='/projectmanagement' Component={ProjectManagement} />
+          <CyberbugsTemplate exact path = "/projectdetail/:projectId" Component={IndexCyberBugs}/>
           
       </Switch>
       </>

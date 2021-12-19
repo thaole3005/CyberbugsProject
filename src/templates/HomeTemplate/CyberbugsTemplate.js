@@ -13,6 +13,7 @@ import ModalCyberbugs from './../../components/Cyberbugs/ModalCyberbugs/ModalCyb
 export const CyberbugsTemplate = (props) => {
     const {Component, ...restParam} = props;
     return <Route {...restParam} render = {(propsRoute) => {
+        // console.log("render CyberbugsTemplate")
         return <>
           
             <div className="jira">

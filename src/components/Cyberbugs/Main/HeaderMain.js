@@ -12,7 +12,7 @@ export default function HeaderMain(props) {
                     <li className="breadcrumb-item">CyberLearn</li>
                     <li className="breadcrumb-item">Project management</li>
                     <li className="breadcrumb-item active" aria-current="page">
-                      Project ABC
+                      {props.projectDetail?.projectName}
                     </li>
                 </ol>
             </nav>

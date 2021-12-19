@@ -37,7 +37,9 @@ function LoginCyberbugs(props) {
                 
 
                 <Button htmlType = "submit" size = "large" className = "mt-5 w-50 text-center"
-                 style = {{backgroundColor: 'rgb(131,199,93)', color: 'white'}}>Login</Button>         
+                 style = {{backgroundColor: 'rgb(131,199,93)', color: 'white'}}
+                //  onClick={handleSubmit}
+                 >Login</Button>         
                 <div className="social mt-3 d-flex">
                     <Button type="primary" shape="circle" icon={<FacebookOutlined />} size={"large"}></Button>
                     <Button type="primary" className="ml-3" shape="circle" icon={<TwitterOutlined />} size={"large"}></Button>

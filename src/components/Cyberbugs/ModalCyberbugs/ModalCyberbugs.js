@@ -1,6 +1,159 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
+import { useSelector, useDispatch } from "react-redux";
+import ReactHtmlParser from "react-html-parser";
+import { Editor } from '@tinymce/tinymce-react';
+import { Select } from 'antd';
+import {CHANGE_TASK_ASSIGNESS, GET_ALL_TASK_PRIORITY_SAGA, GET_ALL_TASK_STATUS_SAGA, GET_ALL_TASK_TYPE_SAGA, HANDLE_CHANGE_COMBINE_POST_API_UPDATE_TASK, UPDATE_STATUS_TASK_SAGA } from "../../../redux/constants/Cyberbugs/TaskConst/TaskConst";
+import { CHANGE_TASK_DETAIL_MODAL, REMOVE_USER_ASSIGN } from './../../../redux/constants/Cyberbugs/TaskConst/TaskConst';
+
+
+const { Option } = Select;
+
+
+
 
 export default function ModalCyberbugs() {
+
+  const dispatch = useDispatch();
+  const {taskDetailModal} = useSelector(rootReducer => rootReducer.TaskReducer);
+  console.log("taskDetailModal", taskDetailModal);
+
+
+  const {arrTaskType} = useSelector(state => state.TaskTypeReducer);
+  const {arrStatus} = useSelector(state => state.TaskStatusReducer);
+  const {arrPriority} = useSelector(state => state.TaskPriorityReducer);
+  // console.log("arrPriority", arrPriority)
+  let {projectDetail} = useSelector(state => state.ProjectReducer);
+
+
+
+  useEffect(() => {
+    dispatch({
+      type: GET_ALL_TASK_TYPE_SAGA,
+    })
+
+    dispatch({
+      type: GET_ALL_TASK_STATUS_SAGA,
+    })
+
+    dispatch({
+      type: GET_ALL_TASK_PRIORITY_SAGA,
+    })
+
+  }, [])
+
+
+  const renderTimeTracking =() => {
+    const {timeTrackingSpent, timeTrackingRemaining} = taskDetailModal;
+    const max = Number(timeTrackingSpent) + Number(timeTrackingRemaining);
+    const percent = Math.round(Number(timeTrackingSpent)/max*100);
+
+
+    return  <div style={{ display: "flex" }}>
+              <i className="fa fa-clock" />
+              <div style={{ width: "100%" }}> 
+                <div className="progress">
+                  <div
+                    className="progress-bar"
+                    role="progressbar"
+                    style={{ width: `${percent}%` }}
+                    aria-valuenow={Number(timeTrackingSpent)}
+                    aria-valuemin={Number(timeTrackingRemaining)}
+                    aria-valuemax={max}
+                  />
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between"}}>
+                  <p className="logged">{Number(timeTrackingSpent)}h logged</p>
+                  <p className="estimate-time">{Number(timeTrackingRemaining)}h estimated</p>
+                </div>
+
+                <div className="row">
+                      <div className="col-6">
+                          <div className="form-group">
+                              <input className="form-control" type = "number" name = "timeTrackingSpent" value = {taskDetailModal.timeTrackingSpent} onChange ={handleChange}/>
+                          </div>
+                      </div>
+                      <div className="col-6">
+                          <div className="form-group">
+                              <input className="form-control" type = "number" name = "timeTrackingRemaining" value = {taskDetailModal.timeTrackingRemaining} onChange ={handleChange}/>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+  }
+
+
+  const [visibleSelectAddMem, setVisibleSelectAddMem] = useState(false);
+  const [visibleEditor, setVisibleEditor] = useState(false);
+  const [historyContent, setHistoryContent] = useState(taskDetailModal.description);
+  const [contentEditor, setContentEditor] = useState(taskDetailModal.description);
+//  console.log("contentEditor", contentEditor)
+  const renderDescription =() => {
+    const jsxDescription = ReactHtmlParser(taskDetailModal.description);
+    return <div>
+              {
+                visibleEditor ?   <div>
+                <Editor
+                    name = "description"
+                    initialValue={taskDetailModal.description}
+                    // value = {taskDetailModal.description}
+                    init={{
+                    height: 500,
+                    menubar: false,
+                    plugins: [
+                        'advlist autolink lists link image charmap print preview anchor',
+                        'searchreplace visualblocks code fullscreen',
+                        'insertdatetime media table paste code help wordcount'
+                    ],
+                    toolbar: 'undo redo | formatselect | ' +
+                    'bold italic backcolor | alignleft aligncenter ' +
+                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                      'removeformat | help',
+                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                    }}
+                    onEditorChange={(content, editor) => {
+                      console.log("content", content);
+                      setContentEditor(content);
+                    }}
+                />
+                <div className="text-right mt-3">
+                  <button className="btn btn-success" onClick = {() => {
+                    console.log("contentEditor khi submit", contentEditor)
+                    dispatch({
+                      type: HANDLE_CHANGE_COMBINE_POST_API_UPDATE_TASK,
+                      actionType: CHANGE_TASK_DETAIL_MODAL,
+                      name: 'description', 
+                      value: contentEditor,
+                    })
+
+                    setVisibleEditor(false);
+                  }}>Save</button>
+                  <button className="btn btn-danger ml-2" onClick = {() => {
+                    setVisibleEditor(false);
+                  }}>Close</button>
+                </div>
+              </div> :    <div className="taskDescription my-4" onClick = {() => {setVisibleEditor(!visibleEditor)}}>
+                            {jsxDescription}
+                          </div>
+              }
+           
+            
+          </div>
+  }
+
+
+  const handleChange = (e) => {
+    let {name, value} = e.target;
+    dispatch({
+      type: HANDLE_CHANGE_COMBINE_POST_API_UPDATE_TASK,
+      actionType: CHANGE_TASK_DETAIL_MODAL,
+      name,
+      value
+    })
+  }
+
+
   return (
     <div
       className="modal fade"
@@ -15,7 +168,14 @@ export default function ModalCyberbugs() {
           <div className="modal-header">
             <div className="task-title">
               <i className="fa fa-bookmark" />
-              <span>TASK-217871</span>
+              <select name ="typeId" value = {taskDetailModal.typeId} onChange ={handleChange}>
+                {
+                  arrTaskType.map((item, index) => {
+                    return <option key={index} value={item.id}>{item.taskType}</option>
+                  })
+                }
+              </select>
+              <h2 className="text-danger">{taskDetailModal.taskName}</h2>
             </div>
             <div style={{ display: "flex" }} className="task-click">
               <div>
@@ -43,19 +203,10 @@ export default function ModalCyberbugs() {
                 <div className="col-8">
                   <p className="issue">This is an issue of type: Task.</p>
                   <div className="description">
-                    <p>Description</p>
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                      Esse expedita quis vero tempora error sed reprehenderit
-                      sequi laborum, repellendus quod laudantium tenetur nobis
-                      modi reiciendis sint architecto. Autem libero quibusdam
-                      odit assumenda fugiat? Beatae aliquid labore vitae
-                      obcaecati sapiente asperiores quia amet id aut, natus quo
-                      molestiae quod voluptas, temporibus iusto laudantium sit
-                      tempora sequi. Rem, itaque id, fugit magnam asperiores
-                      voluptas consectetur aliquid vel error illum, delectus eum
-                      eveniet laudantium at repudiandae!
-                    </p>
+                    <h5 className="text-success">Description <i class="fas fa-arrow-alt-circle-down"></i></h5>
+                    {
+                      renderDescription()
+                    }
                   </div>
                   <div style={{ fontWeight: 500, marginBottom: 10 }}>
                     Jira Software (software projects) issue types:
@@ -146,85 +297,111 @@ export default function ModalCyberbugs() {
                 <div className="col-4">
                   <div className="status">
                     <h6>STATUS</h6>
-                    <select className="custom-select">
-                      <option selected>SELECTED FOR DEVELOPMENT</option>
-                      <option value={1}>One</option>
-                      <option value={2}>Two</option>
-                      <option value={3}>Three</option>
+                    <select className="custom-select" name="statusId" value = {taskDetailModal.statusId} onChange = {(e) => {
+                      // dispatch({
+                      //   type: UPDATE_STATUS_TASK_SAGA,
+                      //   updateStatusTask: {
+                      //     "taskId": taskDetailModal.taskId,
+                      //     "statusId": e.target.value,
+                      //   },
+                      //   projectId: taskDetailModal.projectId,
+                      // })
+
+                      handleChange(e);
+                    }}>
+                      {
+                        arrStatus.map((item, index) => {
+                          return <option key={index} value={item.statusId}>{item.statusName}</option>
+                        })
+                      }
                     </select>
                   </div>
                   <div className="assignees">
                     <h6>ASSIGNEES</h6>
-                    <div style={{ display: "flex" }}>
-                      <div style={{ display: "flex" }} className="item">
-                        <div className="avatar">
-                          <img src="./assets/img/download (1).jfif" alt />
+                    <div className ="row mt-2">
+                      {
+                          taskDetailModal.assigness.map((user, index) => {
+                            return  <div className="col-6 my-2">
+                                      <div style={{ display: "flex" }} key={index} className="item">
+                                        <div className="avatar">
+                                          <img src={user.avatar} alt = {user.name} />
+                                        </div>
+                                        <p className="name mt-1 ml-1">
+                                          {user.name}
+                                          <i
+                                            className="fa fa-times"
+                                            style={{ marginLeft: 5, cursor: 'pointer' }}
+                                            onClick = {() => {
+                                              dispatch({
+                                                type: HANDLE_CHANGE_COMBINE_POST_API_UPDATE_TASK,
+                                                actionType: REMOVE_USER_ASSIGN,
+                                                userId: user.id,
+                                              })
+                                            }}
+                                          />
+                                        </p>
+                                      </div>
+                                     </div>
+                          })
+                        }
+                        <div className = "col-6 my-2">
+                          <button className="btn btn-success w-100" onClick = {() => {setVisibleSelectAddMem(!visibleSelectAddMem)}}>Add more</button>
+                 
+                            {
+                              visibleSelectAddMem ? <Select name ="lstUser" className="form-control" 
+                              optionFilterProp="label"
+                              value = "select user"
+                              options = {
+                                projectDetail.members?.filter(member => {
+                                  let index = taskDetailModal.assigness?.findIndex(user => user.id === member.userId);
+                                  if(index >= 0) {
+                                    return false;
+                                  }
+                                  return true;
+                                }).map((user, index) => {
+                                  return {label: user.name, value: user.userId}
+                                })
+                              }
+                              onSelect = {(valueUserId) => {
+                                // console.log("valueUserId", valueUserId)
+                                let userSelect = projectDetail.members?.find(user => user.userId === valueUserId);
+                                userSelect = {...userSelect, id: userSelect.userId};
+                                console.log("userSelect", userSelect);
+  
+                                dispatch({
+                                  type: HANDLE_CHANGE_COMBINE_POST_API_UPDATE_TASK,
+                                  actionType: CHANGE_TASK_ASSIGNESS,
+                                  userSelect,
+                                })
+                              }}
+                              >
+                              </Select> :''
+                            } 
+                            
+                         
                         </div>
-                        <p className="name">
-                          Pickle Rick
-                          <i
-                            className="fa fa-times"
-                            style={{ marginLeft: 5 }}
-                          />
-                        </p>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <i className="fa fa-plus" style={{ marginRight: 5 }} />
-                        <span>Add more</span>
-                      </div>
                     </div>
                   </div>
-                  <div className="reporter">
-                    <h6>REPORTER</h6>
-                    <div style={{ display: "flex" }} className="item">
-                      <div className="avatar">
-                        <img src="./assets/img/download (1).jfif" alt />
-                      </div>
-                      <p className="name">
-                        Pickle Rick
-                        <i className="fa fa-times" style={{ marginLeft: 5 }} />
-                      </p>
-                    </div>
-                  </div>
+                  
                   <div className="priority" style={{ marginBottom: 20 }}>
                     <h6>PRIORITY</h6>
-                    <select>
-                      <option>Highest</option>
-                      <option>Medium</option>
-                      <option>Low</option>
-                      <option>Lowest</option>
+                    <select name="priorityId" value ={taskDetailModal.priorityId} onChange ={handleChange}>
+                        {
+                          arrPriority.map((item, index) => {
+                            return <option value={item.priorityId} key = {index}>{item.priority}</option>
+                          })
+                        }
                     </select>
                   </div>
                   <div className="estimate">
                     <h6>ORIGINAL ESTIMATE (HOURS)</h6>
-                    <input type="text" className="estimate-hours" />
+                    <input type="text" className="estimate-hours" name ="originalEstimate" value ={taskDetailModal.originalEstimate} onChange ={handleChange}/>
                   </div>
                   <div className="time-tracking">
-                    <h6>TIME TRACKING</h6>
-                    <div style={{ display: "flex" }}>
-                      <i className="fa fa-clock" />
-                      <div style={{ width: "100%" }}>
-                        <div className="progress">
-                          <div
-                            className="progress-bar"
-                            role="progressbar"
-                            style={{ width: "25%" }}
-                            aria-valuenow={25}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                          />
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <p className="logged">4h logged</p>
-                          <p className="estimate-time">12h estimated</p>
-                        </div>
-                      </div>
-                    </div>
+                    <h6 className="font-weight-bold text-dark">TIME TRACKING</h6>
+                      {
+                        renderTimeTracking()
+                      }
                   </div>
                   <div style={{ color: "#929398" }}>Create at a month ago</div>
                   <div style={{ color: "#929398" }}>

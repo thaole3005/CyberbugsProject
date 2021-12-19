@@ -10,6 +10,8 @@ export default function LoadingComponent() {
     const {isLoading} = useSelector(rootReducer => rootReducer.LoadingReducer)
     // console.log("isLoading", isLoading);
 
+    // console.log("render LOADING");
+
     if(isLoading) {
         //nếu isLoading lấy từ reduxStore về là true thì hiển thị loading
             return (
