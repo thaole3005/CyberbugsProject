@@ -72,7 +72,10 @@ const LoginCyberbugsWithFormik = withFormik({
         //!khi nhấn vào nút submit ta muốn dispatch values đi nhưng useDispatch là hook nên chỉ đc sử dụng trong RFC => muốn sử dụng đc dispatch ở đây thì phải dùng props.dispatch
         let action = {
             type: USER_SIGNIN_CYBERBUGS_SAGA,
-            userLogin: values,
+            userLogin: {
+                "email": values.email,
+                "passWord": values.password,
+            }
             //truyền thêm prop history để chuyển hướng ở UserCyberbugsSaga
             // history: props.history,
         }
