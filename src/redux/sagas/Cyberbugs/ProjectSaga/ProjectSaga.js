@@ -187,7 +187,7 @@ function * getProjectDetailSaga(action) {
       yield delay(500);
     try {
         let {data, status} = yield call (() => projectService.getProjectDetail(projectId));
-        // console.log("data in getProjectDetailSaga", data);
+        console.log("data in getProjectDetailSaga", data);
 
         if(status === STATUS_CODE.SUCCESS) {
             //?nếu lấy đc thông tin của projectDetail thành công thì đưa nó lên reduxStỏe của ProjectReducer để trang projectDetail biding lại dữ liệu 

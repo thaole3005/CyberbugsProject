@@ -32,7 +32,7 @@ export default function SidebarCyberbugs() {
 
   return (
     <div> 
-      <Sider trigger={null} collapsible collapsed={state.collapsed} style = {{height: '100%',}}>
+      <Sider trigger={null} collapsible collapsed={state.collapsed} style = {{height: '100%',}} className="mt-3">
         <div className="text-right text-white p-2" onClick = {toggle} style ={{cursor: 'pointer', fontSize: '25px',}}><BarsOutlined /></div>
         <div className="logo" />
  

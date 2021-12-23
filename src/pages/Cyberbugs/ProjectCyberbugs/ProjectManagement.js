@@ -7,7 +7,8 @@ import { EDIT_PROJECT, GET_PROJECT_LIST_SAGA, DELETE_PROJECT_SAGA } from './../.
 import { OPEN_DRAWER, OPEN_FORM_EDIT_PROJECT } from './../../../redux/constants/Cyberbugs/DrawConst/DrawConst';
 import FormEditProject from './../../../components/Form/FormEditProject';
 import { ASSIGN_USER_TO_PROJECT_SAGA, GET_USER_CYBERBUGS_SEARCH_SAGA, REMOVE_USER_FROM_PROJECT_SAGA } from './../../../redux/constants/Cyberbugs/UserConst';
-import { NavLink } from 'react-router-dom';
+import { NavLink,useHistory } from 'react-router-dom';
+import { showConfirm } from './../../../utils/ConfirmAntd/ConfirmAntd';
 
 
 
@@ -161,6 +162,9 @@ const data = [
     const {projectList} = useSelector(state => state.ProjectReducer);
     // console.log("projectList", projectList);
     
+    const {userLogin} = useSelector(state => state.UserCyberbugsReducer);
+    const history = useHistory();
+    
     
     //ngay khi truy cập vào trang /projectmanagement thì gọi action saga để lấy projectList
     useEffect(() => {
@@ -184,6 +188,8 @@ const data = [
     //* useRef vẫn giữ lại giá trị .current khi state khác thay đổi làm render lại giao diện, thì biến tạo bởi useRef k phải khai báo lại, mà vẫn giữ đc gtri trước đó
     const searchRef = useRef(null);
 
+
+   
 
 
 
@@ -222,6 +228,28 @@ const data = [
     //   });
     // };
   
+    useEffect(() => {
+      if(Object.keys(userLogin).length === 0) {
+        //chưa đăng nhập
+        // return <p className="mt-5 text-danger">Bạn cần đăng nhập để sử dụng được trang này</p>
+        showConfirm(
+          "Bạn chưa đăng nhập?",
+          <p>Bạn cần đăng nhập để sử dụng được trang này</p>,
+          () => {
+            history.push("/logincyberbugs");
+          },
+    
+          "Hủy",
+          "Đăng nhập",
+        
+        );
+        return null;
+      }
+    }, [])
+
+    
+
+
     let { sortedInfo, filteredInfo } = state;
   
     sortedInfo = sortedInfo || {};
@@ -489,18 +517,26 @@ const data = [
 
 
   
-    return (
-        <div className="container-fluid mt-4">
-        <h3>Project Management</h3>
-        {/* <Space style={{ marginBottom: 16 }}>
-        <Button onClick={setAgeSort}>Sort age</Button>
-        <Button onClick={clearFilters}>Clear filters</Button>
-        <Button onClick={clearAll}>Clear filters and sorters</Button>
+    return ( 
+      
+        <div className="container-fluid mt-5">
+          {
+            Object.keys(userLogin).length === 0 ? <p className="mt-5 text-danger">Bạn cần đăng nhập để sử dụng được trang này</p>
+            :
+            <>
+                <h3>Project Management</h3>
+          {/* <Space style={{ marginBottom: 16 }}>
+          <Button onClick={setAgeSort}>Sort age</Button>
+          <Button onClick={clearFilters}>Clear filters</Button>
+          <Button onClick={clearAll}>Clear filters and sorters</Button>
+          
+        </Space> */}
+          <Table columns={columns} rowkey = {"id"} dataSource={projectList} 
+          // onChange={handleChange}
+          />
+            </>
+          }
         
-      </Space> */}
-        <Table columns={columns} rowkey = {"id"} dataSource={projectList} 
-        // onChange={handleChange}
-        />
       </div>
     )
 }

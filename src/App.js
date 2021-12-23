@@ -49,7 +49,7 @@ function App() {
         
           <HomeTemplate exact path = "/" Component={Home}/>
           <HomeTemplate exact path = "/home" Component={Home}/>
-          <HomeTemplate exact path = "/contact" Component={Contact}/>
+          {/* <HomeTemplate exact path = "/contact" Component={Contact}/> */}
           <UserLoginTemplate exact path = "/login" Component={Login}/>
           <UserLoginTemplate exact path = "/logincyberbugs" Component={LoginCyberbugs}/>
           <UserLoginTemplate exact path = "/signup" Component={Signup}/>

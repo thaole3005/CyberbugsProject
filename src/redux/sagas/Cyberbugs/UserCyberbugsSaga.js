@@ -1,10 +1,10 @@
 import {fork, take, takeEvery,delay, takeLatest,call, put, select } from 'redux-saga/effects';
-import { ASSIGN_USER_TO_PROJECT_SAGA, USER_SIGNIN_CYBERBUGS_SAGA } from '../../constants/Cyberbugs/UserConst';
+import { ASSIGN_USER_TO_PROJECT_SAGA, LOG_OUT_SAGA, USER_SIGNIN_CYBERBUGS_SAGA } from '../../constants/Cyberbugs/UserConst';
 import { userService } from './../../../services/UserService';
 import { DISPLAY_LOADING, HIDE_LOADING } from './../../constants/LoadingConst';
 import { STATUS_CODE } from './../../../utils/constants/settingSystem';
 import {CYBERBUGS_TOKEN} from '../../../utils/constants/settingSystem';
-import { USER_LOGIN_CYBERBUGS, USER_SIGNIN_CYBERBUGS, GET_USER_CYBERBUGS_SEARCH_SAGA, GET_USER_CYBERBUGS_SEARCH, REMOVE_USER_FROM_PROJECT_SAGA, GET_USER_BY_PROJECT_ID_SAGA, GET_USER_BY_PROJECT_ID } from './../../constants/Cyberbugs/UserConst';
+import { USER_LOGIN_CYBERBUGS, USER_SIGNIN_CYBERBUGS, GET_USER_CYBERBUGS_SEARCH_SAGA, GET_USER_CYBERBUGS_SEARCH, REMOVE_USER__PROJECT_SAGA, GET_USER_BY_PROJECT_ID_SAGA, GET_USER_BY_PROJECT_ID, LOG_OUT, REMOVE_USER_FROM_PROJECT_SAGA } from './../../constants/Cyberbugs/UserConst';
 // import { history } from './../../../utils/libs/history';
 import { GET_PROJECT_LIST_SAGA } from './../../constants/Cyberbugs/ProjectConst/ProjectConst';
 
@@ -29,6 +29,10 @@ function * signinCyberbugsSaga(action) {
             localStorage.setItem(CYBERBUGS_TOKEN, data.content.accessToken);
             localStorage.setItem(USER_LOGIN_CYBERBUGS, JSON.stringify(data.content));
 
+            yield put({
+                type: USER_SIGNIN_CYBERBUGS,
+                userLogin: data.content,
+            })
 
             //dăng nhập thành công thì chuyển về trang home
             //!c1:
@@ -40,10 +44,7 @@ function * signinCyberbugsSaga(action) {
             console.log("history lấy đc ở UserCyberbugsSaga", history);
             history.push('/projectmanagement');
 
-            yield put({
-                type: USER_SIGNIN_CYBERBUGS,
-                userLogin: data.content,
-            })
+          
         }
     } catch (error) {
         console.log("error", error.response.data);
@@ -192,4 +193,33 @@ function * getUserByProjectId(action) {
 
 export function * theoDoiGetUserByProjectIdSaga() {
     yield takeLatest (GET_USER_BY_PROJECT_ID_SAGA, getUserByProjectId);
+}
+
+
+
+
+
+
+
+
+function * logOutSaga(action) {
+    // console.log("ACTION in removeUserFromProjectSaga", action);
+    yield put({
+        type: DISPLAY_LOADING,
+      });
+    
+      yield delay(1000);
+
+    yield put ({
+        type: LOG_OUT,
+    })
+
+    yield put({
+        type: HIDE_LOADING,
+      });
+}
+
+
+export function * theoDoiLogOutSaga() {
+    yield takeLatest (LOG_OUT_SAGA, logOutSaga);
 }

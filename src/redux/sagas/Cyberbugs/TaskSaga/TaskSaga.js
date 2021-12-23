@@ -100,6 +100,7 @@ export function * theoDoiGetAllTaskStatusSaga() {
 function * createNewTaskSaga(action) {
     // console.log("action in createNewTaskSaga", action);
     const {newTask} = action;
+    console.log("newTask", newTask)
     yield put({
         type: DISPLAY_LOADING,
       });
@@ -115,6 +116,10 @@ function * createNewTaskSaga(action) {
             });
 
             displayNotifyFunction("success", "Create new task successfully");
+            yield put({
+                type: GET_PROJECT_DETAIL_SAGA,
+                projectId: newTask.projectId,
+            })
         }
     } catch (error) {
         console.log("error", error.response.data);

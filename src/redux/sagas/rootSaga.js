@@ -14,6 +14,7 @@ export function * rootSaga() {
     UserCyberbugs.theoDoiAssignUserToProjectSaga(),
     UserCyberbugs.theoDoiRemoveUserFromProjectSaga(),
     UserCyberbugs.theoDoiGetUserByProjectIdSaga(),
+    UserCyberbugs.theoDoiLogOutSaga(),
 
     
     theoDoiGetAllProjectCategory(),

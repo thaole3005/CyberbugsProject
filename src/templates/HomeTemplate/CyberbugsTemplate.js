@@ -5,6 +5,7 @@ import SidebarCyberbugs from './../../components/Cyberbugs/Main/SidebarCyberbugs
 import MenuCyberbugs from './../../components/Cyberbugs/MenuCyberbugs';
 import '../../index.css';
 import ModalCyberbugs from './../../components/Cyberbugs/ModalCyberbugs/ModalCyberbugs';
+import Header from './../../components/Home/Header/Header';
 
 
 
@@ -17,10 +18,10 @@ export const CyberbugsTemplate = (props) => {
         return <>
           
             <div className="jira">
-               
+                    <Header/>
                     <SidebarCyberbugs/>
                     <MenuCyberbugs/>
-                    <Component {...propsRoute}/>
+                    <Component {...propsRoute} className="mt-2"/>
                     <ModalCyberbugs/>
             </div>
         </>

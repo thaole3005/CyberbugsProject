@@ -330,13 +330,28 @@ const createTaskFrm = withFormik({
 
     }),
   
-    handleSubmit: (values, {props, setSubmitting }) => {
+    handleSubmit: async (values, {props, setSubmitting }) => {
+        const {projectList, arrPriority, arrTaskType, arrStatus} = props;
+
         // console.log("props của editProjectFrm", props);
         console.log("values sau khi submit FormCreateTask",values);
         //khi ng dùng bấm submit thì gọi action saga create newTask để đưa dữ liệu ng dùng nhập và tạo ra task mới lên serve
-        props.dispatch({
+        await props.dispatch({
             type: CREATE_NEW_TASK_SAGA,
             newTask: values,
+        });
+
+        props.setValues({
+            taskName: '',
+            description: '',
+            statusId: arrStatus[0]?.statusId,
+            originalEstimate: 0,
+            timeTrackingSpent: 0,
+            timeTrackingRemaining: 0,
+            projectId: projectList[0]?.id,
+            typeId: arrTaskType[0]?.id,
+            priorityId: arrPriority[0]?.priorityId,
+            listUserAsign: [],
         })
     },
   

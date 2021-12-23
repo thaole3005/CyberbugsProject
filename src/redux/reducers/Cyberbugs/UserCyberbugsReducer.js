@@ -1,4 +1,4 @@
-import { USER_LOGIN_CYBERBUGS, USER_SIGNIN_CYBERBUGS, GET_USER_CYBERBUGS_SEARCH, GET_USER_BY_PROJECT_ID } from './../../constants/Cyberbugs/UserConst';
+import { USER_LOGIN_CYBERBUGS, USER_SIGNIN_CYBERBUGS, GET_USER_CYBERBUGS_SEARCH, GET_USER_BY_PROJECT_ID, LOG_OUT } from './../../constants/Cyberbugs/UserConst';
 let userLogin = {};
 
 if(localStorage.getItem(USER_LOGIN_CYBERBUGS)) {
@@ -30,6 +30,11 @@ export const UserCyberbugsReducer =  (state = initialState, action) => {
 
     case GET_USER_BY_PROJECT_ID: {
         return { ...state, arrUserByProjectId: action.arrUserByProjectId};
+    }
+
+    case LOG_OUT: {
+        localStorage.removeItem(USER_LOGIN_CYBERBUGS);
+        return {...state, userLogin: {}};
     }
 
     default:

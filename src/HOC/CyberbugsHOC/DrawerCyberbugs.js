@@ -28,9 +28,7 @@ export default function DrawerCyberbugs(props) {
     // console.log("RENDER DrawerCyberbugs");
     return (
         <>
-        <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
-        Show Drawer
-        </Button>
+        
         <Drawer
           title= {title}
           width={720}
