@@ -18,6 +18,14 @@ class UserService extends BaseService {
     
     }
 
+    signupCyberBugs= (userSignUp) => {
+        return Axios({
+            url: `${CYBERBUGS_DOMAIN}/Users/signup`,
+            method: "POST",
+            data: userSignUp,
+        });
+    }
+
     getUserCyberbugsSearch = (kewWordName) => {
         return this.get(`Users/getUser?keyword=${kewWordName}`)
     }

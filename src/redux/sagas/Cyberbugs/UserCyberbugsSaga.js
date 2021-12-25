@@ -1,5 +1,5 @@
 import {fork, take, takeEvery,delay, takeLatest,call, put, select } from 'redux-saga/effects';
-import { ASSIGN_USER_TO_PROJECT_SAGA, LOG_OUT_SAGA, USER_SIGNIN_CYBERBUGS_SAGA } from '../../constants/Cyberbugs/UserConst';
+import { ASSIGN_USER_TO_PROJECT_SAGA, LOG_OUT_SAGA, USER_SIGNIN_CYBERBUGS_SAGA, USER_SIGNUP_SAGA } from '../../constants/Cyberbugs/UserConst';
 import { userService } from './../../../services/UserService';
 import { DISPLAY_LOADING, HIDE_LOADING } from './../../constants/LoadingConst';
 import { STATUS_CODE } from './../../../utils/constants/settingSystem';
@@ -61,6 +61,49 @@ function * signinCyberbugsSaga(action) {
 
 export function * theoDoiSigninCyberbugsSaga() {
     yield takeLatest(USER_SIGNIN_CYBERBUGS_SAGA, signinCyberbugsSaga)
+}
+
+
+// ------------NHIỆM VỤ SIGN UP----------------
+function* signUpSaga(action) {
+    console.log("vào saga signup")
+    yield put({
+        type: DISPLAY_LOADING,
+    });
+    yield delay(1000);
+
+    try {
+        const { data, status } = yield call(() =>
+            userService.signupCyberBugs(action.userSignUp)
+        );
+
+        // Store in localStorage after register successfully
+        // localStorage.setItem(USER_PROFILE, data.content);
+        // localStorage.setItem(USER_LOGIN, JSON.stringify(data.content));
+
+        // yield put({
+        //     type: LOGIN_INFO,
+        //     userLogin: data.content,
+        // });
+        
+        if(status === STATUS_CODE.SUCCESS) {
+            alert("Đăng kí thành công");
+            let history = yield select(state => state.HistoryReducer);
+            history.push('/logincyberbugs');
+        }
+
+
+        
+    } catch (error) {
+        console.log(error.response.data);
+    }
+    yield put({
+        type: HIDE_LOADING,
+    });
+}
+
+export function* theoDoiSignUpSaga() {
+    yield takeLatest(USER_SIGNUP_SAGA, signUpSaga);
 }
 
 
